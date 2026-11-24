@@ -120,6 +120,9 @@ main, .rodape { max-width: 960px; margin: 0 auto; padding: 0 16px; }
   box-shadow: var(--sombra);
 }
 .produto.indisponivel { opacity: 0.55; }
+.produto.compacto { position: relative; padding: 10px 12px; }
+.produto.compacto .qtd-badge { top: -8px; right: -6px; }
+.secao-desc { margin: -6px 0 12px; color: var(--texto-suave); font-size: 0.9rem; }
 .foto {
   position: relative;
   flex: none;

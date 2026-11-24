@@ -95,6 +95,10 @@
   // Quando a quantidade já é uma opção do produto (ex.: "50 unidades"), não mostra o contador +/−.
   const qtdNaOpcao = (p) => (p.opcoes || []).some((op) => /quantidade/i.test(op.nome));
 
+  const passo = (p) => p.passo || 1;
+  // Quantidade exibida: com "lote" (ex.: 25 doces por item) mostra o total de unidades
+  const qtdTexto = (p, q) => (p.lote ? `${q * p.lote} un.` : String(q));
+
   const temVariacaoDePreco = (p) =>
     (p.opcoes || []).some((op) => new Set(op.valores.map((v) => valorOpcao(v).acrescimo)).size > 1);
 
@@ -108,6 +112,7 @@
   const intervalos = (str) => (str ? str.split(',').map((f) => f.split('-').map(paraMin)) : []);
 
   function abertoAgora(d = new Date()) {
+    if (L.horarioLivre) return true; // pedidos a qualquer hora
     const min = d.getHours() * 60 + d.getMinutes();
     return intervalos(L.horarios[DIAS[d.getDay()]]).some(([a, f]) => min >= a && min < f);
   }
@@ -145,7 +150,7 @@
     else carrinho.push({ chave: k, id, escolhas, qtd, preco: precoUnitario(p, escolhas) });
     salvarCarrinho();
     atualizarResumo();
-    toast(`${qtd}x ${p.nome} no carrinho`);
+    toast(`${p.lote ? qtdTexto(p, qtd) : qtd + 'x'} ${p.nome} no carrinho`);
   }
 
   function alterarQtd(k, delta) {
@@ -198,7 +203,7 @@
         <div class="topo-textos">
           <h1>${esc(L.nome)}</h1>
           <p class="slogan">${esc(L.slogan)}</p>
-          <span class="status ${aberto ? 'aberto' : 'fechado'}">${aberto ? 'Aberto agora' : 'Fechado agora'}</span>
+          ${L.horarioLivre ? '' : `<span class="status ${aberto ? 'aberto' : 'fechado'}">${aberto ? 'Aberto agora' : 'Fechado agora'}</span>`}
         </div>
       </div>
       <div class="topo-acoes">
@@ -214,12 +219,14 @@
   // ---------------------------------------------------------------- catálogo
   function cardProduto(p) {
     const indisponivel = p.disponivel === false;
+    // Sem foto e loja com "compactoSemFoto": card em formato de lista (sem a caixa do emoji)
+    const compacto = !p.foto && L.compactoSemFoto;
     const foto = p.foto
       ? `<img src="${esc(p.foto)}" alt="${esc(p.nome)}" loading="lazy">`
       : `<span class="emoji" aria-hidden="true">${esc(p.emoji || L.emoji)}</span>`;
     return `
-      <article class="produto${indisponivel ? ' indisponivel' : ''}">
-        <div class="foto">${foto}<span class="qtd-badge" data-badge="${esc(p.id)}" hidden></span></div>
+      <article class="produto${indisponivel ? ' indisponivel' : ''}${compacto ? ' compacto' : ''}">
+        ${compacto ? `<span class="qtd-badge" data-badge="${esc(p.id)}" hidden></span>` : `<div class="foto">${foto}<span class="qtd-badge" data-badge="${esc(p.id)}" hidden></span></div>`}
         <div class="info">
           <h3>${esc(p.nome)}</h3>
           ${p.descricao ? `<p class="descricao">${esc(p.descricao)}</p>` : ''}
@@ -243,7 +250,7 @@
     if (destaques.length) secoes.push({ id: 'destaques', nome: L.tituloDestaques || '⭐ Mais pedidos', itens: destaques });
     L.categorias.forEach((c) => {
       const itens = produtos.filter((p) => p.categoria === c.id);
-      if (itens.length) secoes.push({ id: c.id, nome: c.nome, itens });
+      if (itens.length) secoes.push({ id: c.id, nome: c.nome, descricao: c.descricao, itens });
     });
 
     $('#categorias').innerHTML = secoes
@@ -255,6 +262,7 @@
         (s) => `
         <section class="secao" id="sec-${esc(s.id)}">
           <h2>${esc(s.nome)}</h2>
+          ${s.descricao ? `<p class="secao-desc">${esc(s.descricao)}</p>` : ''}
           <div class="grade">${s.itens.map(cardProduto).join('')}</div>
         </section>`
       )
@@ -285,7 +293,7 @@
       </section>
       <section>
         <h2>Horário de atendimento</h2>
-        <table class="horarios">${linhas}</table>
+        ${L.horarioLivre ? `<p>${esc(L.textoHorarioLivre || 'Faça seu pedido a qualquer hora pelo site. Respondemos pelo WhatsApp.')}</p>` : `<table class="horarios">${linhas}</table>`}
       </section>
       <section>
         <h2>Onde estamos</h2>
@@ -321,7 +329,7 @@
     const p = produtoPorId[id];
     const dlg = $('#dlgProduto');
     const escolhas = {};
-    let qtd = 1;
+    let qtd = passo(p);
 
     dlg.innerHTML = `
       <form method="dialog" class="dlg">
@@ -354,7 +362,7 @@
             <span>Quantidade</span>
             <div class="stepper">
               <button type="button" data-q="-1" aria-label="Diminuir">−</button>
-              <output id="qtdProduto">1</output>
+              <output id="qtdProduto">${esc(qtdTexto(p, passo(p)))}</output>
               <button type="button" data-q="1" aria-label="Aumentar">+</button>
             </div>
           </div>
@@ -367,7 +375,7 @@
 
     const atualizarBotao = () => {
       $('#btnConfirmarProduto', dlg).textContent = ORC ? TXT.adicionar : `Adicionar • ${brl(precoUnitario(p, escolhas) * qtd)}`;
-      $('#qtdProduto', dlg).textContent = qtd;
+      $('#qtdProduto', dlg).textContent = qtdTexto(p, qtd);
     };
 
     (p.opcoes || []).forEach((op, i) => {
@@ -381,7 +389,7 @@
     });
     $$('[data-q]', dlg).forEach((b) =>
       b.addEventListener('click', () => {
-        qtd = Math.max(1, qtd + Number(b.dataset.q));
+        qtd = Math.max(passo(p), qtd + Number(b.dataset.q) * passo(p));
         atualizarBotao();
       })
     );
@@ -430,9 +438,9 @@
               qtdNaOpcao(p)
                 ? `<button type="button" class="btn-remover" data-item="${esc(i.chave)}" data-d="-${i.qtd}" aria-label="Remover">🗑 Remover</button>`
                 : `<div class="stepper">
-              <button type="button" data-item="${esc(i.chave)}" data-d="-1" aria-label="Diminuir">${i.qtd === 1 ? '🗑' : '−'}</button>
-              <output>${i.qtd}</output>
-              <button type="button" data-item="${esc(i.chave)}" data-d="1" aria-label="Aumentar">+</button>
+              <button type="button" data-item="${esc(i.chave)}" data-d="-${passo(p)}" aria-label="Diminuir">${i.qtd <= passo(p) ? '🗑' : '−'}</button>
+              <output>${esc(qtdTexto(p, i.qtd))}</output>
+              <button type="button" data-item="${esc(i.chave)}" data-d="${passo(p)}" aria-label="Aumentar">+</button>
             </div>`
             }
           </div>`;
@@ -441,6 +449,16 @@
     }
     $$('[data-item]', lista).forEach((b) => b.addEventListener('click', () => alterarQtd(b.dataset.item, Number(b.dataset.d))));
     renderTotais();
+  }
+
+  // Doces com "lote" precisam fechar centos completos (regraCento.tamanho)
+  function statusCento() {
+    const rc = L.regraCento;
+    if (!rc) return null;
+    const un = carrinho.reduce((s, i) => s + (produtoPorId[i.id].lote ? i.qtd * produtoPorId[i.id].lote : 0), 0);
+    if (!un) return null;
+    const resto = un % rc.tamanho;
+    return { un, falta: resto ? rc.tamanho - resto : 0 };
   }
 
   function renderTotais() {
@@ -453,13 +471,18 @@
     const t = totais();
     const min = L.entrega.pedidoMinimo || 0;
     const abaixoMinimo = min > 0 && t.subtotal < min;
+    const cento = statusCento();
+    const centoIncompleto = !!(cento && cento.falta);
     $('#totais').innerHTML = `
       <div><span>Subtotal</span><span>${brl(t.subtotal)}</span></div>
       ${dados.tipo === 'entrega' ? `<div><span>Taxa de entrega</span><span>${(L.entrega.bairros || []).length && !dados.bairro ? 'escolha o bairro' : t.taxa ? brl(t.taxa) : 'Grátis'}</span></div>` : ''}
       <div class="total"><span>Total</span><span>${brl(t.total)}</span></div>
+      ${L.sinal ? `<div><span>Sinal ${Math.round(L.sinal * 100)}% (reserva a data)</span><span>${brl(t.total * L.sinal)}</span></div>
+      <div><span>${esc(L.textoRestante || 'Restante')}</span><span>${brl(t.total * (1 - L.sinal))}</span></div>` : ''}
+      ${centoIncompleto ? `<p class="erro">${esc(L.regraCento.aviso || 'Os doces são vendidos por cento.')} Você escolheu ${cento.un} doces: faltam ${cento.falta} para completar.</p>` : ''}
       ${abaixoMinimo ? `<p class="erro">Pedido mínimo: ${brl(min)}. Faltam ${brl(min - t.subtotal)}.</p>` : ''}`;
     const btn = $('#btnEnviar');
-    if (btn) btn.disabled = !carrinho.length || abaixoMinimo;
+    if (btn) btn.disabled = !carrinho.length || abaixoMinimo || centoIncompleto;
   }
 
   function dataMinima() {
@@ -547,7 +570,7 @@
             .join('')}
 
           ${
-            ORC
+            ORC || !L.pagamentos.length
               ? ''
               : `
           <fieldset class="opcoes">
@@ -610,7 +633,9 @@
       else if (dados.data < dataMinima()) faltas.push(`uma data a partir de ${formatarData(dataMinima())}`);
     }
     extras.forEach((c) => c.obrigatorio && !String(dados[c.nome]).trim() && faltas.push(c.rotulo.toLowerCase()));
-    if (!ORC && !dados.pagamento) faltas.push('a forma de pagamento');
+    if (!ORC && L.pagamentos.length && !dados.pagamento) faltas.push('a forma de pagamento');
+    const cento = statusCento();
+    if (cento && cento.falta) faltas.push(`mais ${cento.falta} doces para completar o cento`);
     if (!ORC && /dinheiro/i.test(dados.pagamento) && dados.troco.trim()) {
       const troco = Number(dados.troco.replace(/[^\d,.]/g, '').replace(/\.(?=\d{3})/g, '').replace(',', '.'));
       if (!troco || troco < totais().total) faltas.push(`um troco maior que o total (${brl(totais().total)})`);
@@ -654,15 +679,21 @@
     carrinho.forEach((i) => {
       const p = produtoPorId[i.id];
       const det = descricaoEscolhas(i.escolhas);
-      linhas.push(`• ${qtdNaOpcao(p) && i.qtd === 1 ? '' : i.qtd + 'x '}${p.nome}${det ? ' (' + det + ')' : ''}${ORC ? '' : ' — ' + brl(i.preco * i.qtd)}`);
+      linhas.push(`• ${p.lote ? qtdTexto(p, i.qtd) + ' ' : qtdNaOpcao(p) && i.qtd === 1 ? '' : i.qtd + 'x '}${p.nome}${det ? ' (' + det + ')' : ''}${ORC ? '' : ' — ' + brl(i.preco * i.qtd)}`);
     });
     if (!ORC) {
       linhas.push('');
       linhas.push(`Subtotal: ${brl(t.subtotal)}`);
       if (dados.tipo === 'entrega') linhas.push(`Entrega: ${t.taxa ? brl(t.taxa) : 'grátis'}`);
       linhas.push(`*TOTAL: ${brl(t.total)}*`);
-      linhas.push('');
-      linhas.push(`*Pagamento:* ${dados.pagamento}${/dinheiro/i.test(dados.pagamento) && dados.troco.trim() ? ' — troco para R$ ' + dados.troco.trim() : ''}`);
+      if (L.sinal) {
+        linhas.push(`Sinal ${Math.round(L.sinal * 100)}% para reservar a data: ${brl(t.total * L.sinal)}`);
+        linhas.push(`${L.textoRestante || 'Restante'}: ${brl(t.total * (1 - L.sinal))}`);
+      }
+      if (dados.pagamento) {
+        linhas.push('');
+        linhas.push(`*Pagamento:* ${dados.pagamento}${/dinheiro/i.test(dados.pagamento) && dados.troco.trim() ? ' — troco para R$ ' + dados.troco.trim() : ''}`);
+      }
     }
     if (dados.obs.trim()) linhas.push(`*Observações:* ${dados.obs.trim()}`);
     if (L.rodapeMensagem) {
@@ -744,7 +775,7 @@
       if (add) {
         const p = produtoPorId[add.dataset.add];
         if ((p.opcoes || []).length) abrirProduto(p.id);
-        else adicionar(p.id, {}, 1);
+        else adicionar(p.id, {}, passo(p));
         return;
       }
       if (e.target.closest('#btnInstalar') && eventoInstalar) {

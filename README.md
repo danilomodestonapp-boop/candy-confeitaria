@@ -1,37 +1,41 @@
-# Candy Confeitaria: site e app de orçamentos pelo WhatsApp
+# Candy Confeitaria: site de pedidos pelo WhatsApp
 
-Doces personalizados para festa, em Leme-SP. A cliente escolhe os doces e as quantidades, informa a data da festa, o tema e o número de convidados, e o **pedido de orçamento chega organizado no WhatsApp (19) 99634-7835**. O site pode ser instalado na tela do celular como app (PWA).
+Doces finos e personalizados em Leme-SP. A cliente monta o pedido com o cardápio e os preços, informa a data da festa, o tema e o número de convidados, e o **pedido chega pronto no WhatsApp (19) 99684-6406**. O site pode ser instalado no celular como app (PWA).
 
-> **Status:** nome, bio, cidade, WhatsApp, logo e fotos vieram do Instagram. Os itens marcados `CONFIRMAR` no `config.js` (horários, antecedência mínima, entrega, nomes dos doces) são suposições e precisam ser validados com ela. Logo e fotos foram recortados de um print: trocar pelos originais em alta.
+> Cardápio, preços e regras vieram do PDF "Cardápio Candy Confeitaria". Pedidos a qualquer horário. Fotos dos personalizados extraídas do PDF; logo recortado do Instagram.
 
-## Modo orçamento
+## Regras do cardápio no site
 
-A Candy não trabalha com preço fixo (bio: "Contato para orçamentos"). Com `orcamento: true` o site:
-- mostra "Sob orçamento" no lugar do preço;
-- não mostra total nem forma de pagamento;
-- pergunta a data da festa (mínimo de dias configurável), o tema e o número de convidados;
-- envia um **PEDIDO DE ORÇAMENTO** em vez de um pedido fechado.
-
-Para mostrar preço de algum item, basta preencher `preco` (aparece como "a partir de R$ ...").
+| Regra | Como o site aplica |
+|---|---|
+| Doces tradicionais (cento R$ 160) e especiais (cento R$ 190/200) | Cada sabor é escolhido de 25 em 25 (`lote: 25`). O envio só libera com **centos completos** (`regraCento`). Com lotes de 25, cada cento tem no máximo 4 sabores. Misturar tradicional e especial soma o valor proporcional. |
+| Aplique em pasta americana: +R$ 1 por doce | Opção "Com aplique" em cada sabor (+R$ 25 por lote de 25) |
+| Personalizados e doces por unidade | Quantidade de 10 em 10 (`passo: 10`). Pedido mínimo sujeito à disponibilidade. |
+| Mínimo de 5 dias de antecedência | Calendário não aceita data anterior |
+| 40% para reservar a data, restante na retirada | Total, sinal de 40% e restante aparecem no carrinho e na mensagem (`sinal: 0.4`) |
 
 Exemplo de mensagem que chega:
 
 ```
-*PEDIDO DE ORÇAMENTO — Candy Confeitaria*
-Orçamento nº 2411-1058
+*NOVO PEDIDO — Candy Confeitaria*
+Pedido nº 2411-1407
 
 *Cliente:* Maria
-*Receber:* Entrega
-*Endereço:* Rua das Flores, 10
-*Para:* 04/12/2026 (Sexta) às 15:00
-*Tema da festa:* Peter Pan
-*Nº de convidados:* 60
+*Receber:* Retirar com a Candy
+*Para:* 01/12/2026 (Terça)
+*Tema da festa:* Fazendinha
+*Nº de convidados:* 80
 
 *Itens:*
-• Docinhos finos decorados (Quantidade: 100 unidades)
-• Cupcakes personalizados (Quantidade: 20 unidades)
+• 50 un. Brigadeiro (Aplique: Sem aplique) — R$ 80,00
+• 25 un. Leite Ninho (Aplique: Com aplique) — R$ 72,50
+• 25 un. Floresta negra (Aplique: Sem aplique) — R$ 50,00
+• 20x Mini trufas (Recheio: Maracujá) — R$ 90,00
 
-*Observações:* cores verde e branco
+Subtotal: R$ 292,50
+*TOTAL: R$ 292,50*
+Sinal 40% para reservar a data: R$ 117,00
+Restante na retirada: R$ 175,50
 ```
 
 ## Arquivos
@@ -46,25 +50,7 @@ Orçamento nº 2411-1058
 
 ## Editar o cardápio (`config.js`)
 
-```js
-{
-  id: 'cupcakes',            // identificador único, sem espaço nem acento
-  categoria: 'personalizados', // precisa existir em "categorias"
-  nome: 'Cupcakes personalizados',
-  descricao: 'Decorados com o tema da festa.',
-  preco: null,               // null = sob orçamento; 90 = "a partir de R$ 90,00"
-  foto: 'fotos/cupcakes.jpg', // opcional; sem foto, aparece o emoji
-  emoji: '🧁',
-  destaque: true,            // aparece em "Mais pedidos"
-  disponivel: false,         // mostra "Esgotado"
-  ativo: false,              // some do site
-  opcoes: [                  // o cliente escolhe 1 opção de cada grupo
-    { nome: 'Quantidade', valores: ['25 unidades', '50 unidades', '100 unidades'] },
-  ],
-}
-```
-
-Fotos: preferir quadradas, até ~200 KB cada (JPG). Foto pesada deixa o site lento em 4G.
+Mudar preço: altere `preco` (por unidade) ou o valor do cento na lista de sabores (o site divide por 4 sozinho). Novo sabor: acrescente uma linha na lista de tradicionais ou especiais. Novo personalizado: copie um bloco existente (ex.: `mini-trufas`).
 
 ## Publicar (gratuito)
 
@@ -83,14 +69,10 @@ Depois de publicar:
 
 Abrir `index.html` direto no navegador já funciona para conferir o cardápio e a mensagem. A instalação como app só funciona depois de publicado (exige HTTPS).
 
-## Checklist antes de publicar
+## Pendências
 
-- [x] WhatsApp (19) 99634-7835 configurado
-- [ ] Pedido de teste real enviado e recebido por ela
-- [ ] Confirmar a lista de doces e as quantidades oferecidas
-- [ ] Horários reais
-- [ ] Regra de entrega: taxa única ou por bairro, pedido mínimo
-- [ ] Antecedência mínima de encomenda (`encomenda.antecedenciaDias`)
-- [ ] Faz entrega ou só retirada?
-- [ ] Logo e fotos originais em alta (as atuais são recortes de print)
-- [ ] Teste completo em Android e iPhone
+- [ ] Confirmar se é **somente retirada** (o site está assim)
+- [ ] Pedido mínimo dos personalizados (hoje: de 10 em 10)
+- [ ] Recheios da trufa cake (hoje: informar nas observações)
+- [ ] Chave Pix para o sinal, se quiser exibir no site
+- [ ] Logo em alta e fotos dos doces tradicionais/especiais

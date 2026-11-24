@@ -2,82 +2,83 @@
  * ============================================================
  *  CONFIGURAÇÃO DA LOJA — é só este arquivo que você edita.
  * ============================================================
- *  Dados confirmados pelo Instagram (@candyconfeitariam):
- *    nome, bio e cidade (Leme-SP).
- *  WhatsApp: (19) 99634-7835 (o mesmo da bio do Instagram).
- *  ⚠️ Marcado com "CONFIRMAR": suposição minha, validar com ela.
+ *  Fonte: Cardápio Candy Confeitaria (PDF) + Instagram @candyconfeitariam.
+ *  Confirmado com a família:
+ *    - WhatsApp de pedidos: (19) 99684-6406
+ *    - Pedidos a qualquer horário
+ *    - Pagamento: 40% no fechamento (reserva a data), restante na retirada
+ *  ⚠️ "CONFIRMAR" = suposição minha, validar com ela.
  *
- *  A Candy trabalha com ORÇAMENTO (sem preço fixo no site):
- *  a cliente monta o pedido e a Candy responde o valor no WhatsApp.
- *  Se um dia quiser mostrar preço, coloque "preco" no produto
- *  (aparece como "a partir de R$ ...").
+ *  Como funcionam os doces por CENTO (tradicionais e especiais):
+ *    cada sabor é vendido em lotes de 25 (lote: 25). O site só deixa
+ *    enviar centos completos (100, 200...). Com lotes de 25, cada cento
+ *    tem no máximo 4 sabores, como manda o cardápio. Misturar categorias
+ *    soma o valor proporcional de cada sabor.
  *
  *  Dicas rápidas:
- *  - Para esconder um produto de vez: ativo: false
- *  - Para mostrar como "Esgotado": disponivel: false
- *  - Para destacar no topo ("Mais pedidos"): destaque: true
- *  - Foto: coloque o arquivo na pasta "fotos" e use foto: 'fotos/nome.jpg'
+ *  - Preço usa ponto: 47.5 = R$ 47,50
+ *  - Para esconder um produto: ativo: false · Esgotado: disponivel: false
+ *  - Destacar no topo: destaque: true
  */
 window.LOJA = {
   id: 'candy-confeitaria', // não mude depois de publicado (guarda o carrinho do cliente)
 
   nome: 'Candy Confeitaria',
-  slogan: 'Doces personalizados para sua festa',
+  slogan: 'Doces finos e personalizados',
   emoji: '🧁',
   logo: 'fotos/logo.jpg', // recortado do Instagram; trocar pelo arquivo original em alta
 
-  whatsapp: '5519996347835',
-  whatsappExibicao: '(19) 99634-7835',
+  // WhatsApp que RECEBE os pedidos: 55 + DDD + número, só dígitos
+  whatsapp: '5519996846406',
+  whatsappExibicao: '(19) 99684-6406',
   instagram: 'candyconfeitariam',
   endereco: '', // sem endereço público: o botão "Como chegar" fica escondido
   cidade: 'Leme - SP',
 
-  orcamento: true,
-  textoOrcamento: 'Os valores dependem da quantidade, do tema e do acabamento. A Candy responde o orçamento pelo WhatsApp.',
+  orcamento: false, // cardápio com preço: o site calcula o total
 
-  mensagemContato: 'Olá! Vim pelo site da Candy Confeitaria e gostaria de um orçamento.',
-  avisoFechado: 'Fora do horário de atendimento: pode pedir seu orçamento que respondemos assim que possível.',
-  avisoGeral: '',
+  mensagemContato: 'Olá! Vim pelo site da Candy Confeitaria e gostaria de fazer um pedido.',
+  avisoGeral: 'Encomendas com no mínimo 5 dias de antecedência. A data é reservada com o pagamento de 40% do pedido.',
 
-  // Horário de atendimento no WhatsApp. Vazio ('') = fechado.
-  horarios: { // CONFIRMAR
-    seg: '09:00-18:00',
-    ter: '09:00-18:00',
-    qua: '09:00-18:00',
-    qui: '09:00-18:00',
-    sex: '09:00-18:00',
-    sab: '09:00-13:00',
-    dom: '',
-  },
+  horarioLivre: true,
+  textoHorarioLivre: 'Faça seu pedido a qualquer hora pelo site. Respondemos pelo WhatsApp para confirmar a data.',
+  horarios: {}, // não usado com horarioLivre
 
   entrega: {
     retirada: true,
-    textoRetirada: 'Retirar em Leme',
-    delivery: true,
+    textoRetirada: 'Retirar com a Candy', // CONFIRMAR: só retirada? ("restante na retirada")
+    delivery: false,
     taxa: 0,
     bairros: [],
     pedidoMinimo: 0,
-    observacao: 'Entrega e taxa combinadas pelo WhatsApp.', // CONFIRMAR se ela entrega
+    observacao: '',
   },
 
   encomenda: {
     exigeData: true,
-    antecedenciaDias: 7, // CONFIRMAR antecedência mínima
-    rotuloData: 'Data da festa',
-    aviso: 'Pedidos com pelo menos 7 dias de antecedência. A data só fica reservada após a confirmação pelo WhatsApp.', // CONFIRMAR
+    antecedenciaDias: 5,
+    rotuloData: 'Data da festa / retirada',
+    aviso: 'Mínimo de 5 dias de antecedência, desde que a data esteja disponível. A Candy confirma pelo WhatsApp.',
   },
 
-  // Perguntas extras do orçamento (aparecem no formulário e na mensagem)
+  // Pagamento: 40% para reservar a data, restante na retirada
+  sinal: 0.4,
+  textoRestante: 'Restante na retirada',
+  pagamentos: [], // forma de pagamento combinada no WhatsApp
+  pix: '', // CONFIRMAR: chave Pix para o sinal, se quiser que apareça no site
+
+  regraCento: {
+    tamanho: 100,
+    aviso: 'Doces tradicionais e especiais são vendidos por cento (até 4 sabores por cento, 25 de cada).',
+  },
+
   camposExtras: [
-    { nome: 'tema', rotulo: 'Tema da festa', exemplo: 'Ex.: Peter Pan, jardim, 15 anos…' },
+    { nome: 'tema', rotulo: 'Tema da festa', exemplo: 'Ex.: fazendinha, sereia, 15 anos…' },
     { nome: 'convidados', rotulo: 'Nº de convidados', tipo: 'number', exemplo: 'Ex.: 50' },
   ],
 
-  pagamentos: ['Pix', 'Dinheiro', 'Cartão'], // não aparece no modo orçamento
-  pix: '',
-
-  placeholderObs: 'Ex.: cores da festa, nome do aniversariante, sabores preferidos, alergias…',
-  rodapeMensagem: 'Pedido de orçamento feito pelo site 🙂',
+  placeholderObs: 'Ex.: cores da festa, nome do aniversariante, recheio da trufa cake, alergias…',
+  rodapeMensagem: 'Pedido feito pelo site 🙂 Aguardo a confirmação da data.',
 
   // Cores tiradas do logo (rosa e creme)
   tema: {
@@ -87,89 +88,150 @@ window.LOJA = {
     fundo: '#fdf9f6',
   },
 
-  // Categorias como no catálogo dela (post do Instagram): Tradicionais, Gourmet e Personalizados
+  tituloDestaques: '⭐ Personalizados mais pedidos',
+  compactoSemFoto: true, // sabores sem foto aparecem em lista compacta
+
   categorias: [
-    { id: 'tradicionais', nome: 'Tradicionais' },
-    { id: 'gourmet', nome: 'Gourmet' },
-    { id: 'personalizados', nome: 'Personalizados' },
+    {
+      id: 'tradicionais',
+      nome: 'Doces tradicionais',
+      descricao: 'Cento R$ 160,00. Escolha de 25 em 25: até 4 sabores por cento. Aplique em pasta americana: +R$ 1 por doce.',
+    },
+    {
+      id: 'especiais',
+      nome: 'Doces especiais',
+      descricao: 'Cento R$ 190,00 ou R$ 200,00. Escolha de 25 em 25 e misture com os tradicionais. Aplique: +R$ 1 por doce.',
+    },
+    {
+      id: 'personalizados',
+      nome: 'Personalizados',
+      descricao: 'Doces com aplique em pasta americana. Quantidade de 10 em 10; pedido mínimo sujeito à disponibilidade.',
+    },
+    { id: 'doces', nome: 'Doces' },
   ],
 
-  // Produtos montados a partir das fotos do Instagram. CONFIRMAR nomes,
-  // sabores e quantidades mínimas. Fotos recortadas do perfil: trocar
-  // pelas originais em alta para ficar mais nítido.
+  // ===================== CARDÁPIO (PDF) =====================
   produtos: [
-    {
-      id: 'docinhos-finos',
-      categoria: 'gourmet',
-      nome: 'Docinhos gourmet decorados',
-      descricao: 'Acabamento com detalhes dourados e forminhas de flor nas cores da festa.',
-      preco: null,
-      foto: 'fotos/docinhos-finos.jpg',
-      destaque: true,
-      opcoes: [
-        { nome: 'Quantidade', valores: ['25 unidades', '50 unidades', '100 unidades', 'Mais de 100 (informar nas observações)'] },
-      ],
-    },
-    {
-      id: 'brigadeiros',
+    // ---- Tradicionais: cento R$ 160 → lote de 25 = R$ 40
+    ...[
+      ['brigadeiro', 'Brigadeiro'],
+      ['beijinho', 'Beijinho'],
+      ['brigadeiro-branco', 'Brigadeiro branco'],
+      ['bicho-de-pe', 'Bicho de pé'],
+    ].map(([id, nome, foto]) => ({
+      id,
       categoria: 'tradicionais',
-      nome: 'Brigadeiros e docinhos tradicionais',
-      descricao: 'Brigadeiro, beijinho e outros clássicos, em forminhas.',
-      preco: null,
-      foto: 'fotos/brigadeiros.jpg',
-      opcoes: [
-        { nome: 'Quantidade', valores: ['25 unidades', '50 unidades', '100 unidades', 'Mais de 100 (informar nas observações)'] },
-      ],
-    },
+      nome,
+      descricao: 'Cento R$ 160,00',
+      preco: 40,
+      unidade: '25 un.',
+      lote: 25,
+      foto,
+      emoji: '🍫',
+      opcoes: [{ nome: 'Aplique', valores: ['Sem aplique', { nome: 'Com aplique', acrescimo: 25 }] }],
+    })),
+
+    // ---- Especiais: cento R$ 190 ou R$ 200 → lote de 25 = R$ 47,50 ou R$ 50
+    ...[
+      ['leite-ninho', 'Leite Ninho', 190],
+      ['oreo', 'Oreo', 190],
+      ['churros', 'Churros', 190],
+      ['pacoca', 'Paçoca', 190],
+      ['floresta-negra', 'Floresta negra', 200],
+      ['floresta-branca', 'Floresta branca', 200],
+      ['cereja', 'Cereja', 200],
+      ['ninho-nutella', 'Ninho com Nutella', 200],
+      ['ninho-doce-de-leite', 'Ninho com doce de leite', 200],
+    ].map(([id, nome, cento]) => ({
+      id,
+      categoria: 'especiais',
+      nome,
+      descricao: `Cento R$ ${cento},00`,
+      preco: cento / 4,
+      unidade: '25 un.',
+      lote: 25,
+      emoji: '🍬',
+      opcoes: [{ nome: 'Aplique', valores: ['Sem aplique', { nome: 'Com aplique', acrescimo: 25 }] }],
+    })),
+
+    // ---- Personalizados (com aplique em pasta americana), por unidade
+    // Pedido mínimo: "verifique a disponibilidade" → quantidade de 10 em 10 (CONFIRMAR mínimo)
     {
-      id: 'bombons',
-      categoria: 'gourmet',
-      nome: 'Bombons e trufas',
-      descricao: 'Chocolate branco e ao leite, com acabamento decorado.',
-      preco: null,
-      foto: 'fotos/bombons.jpg',
-      opcoes: [
-        { nome: 'Quantidade', valores: ['25 unidades', '50 unidades', '100 unidades', 'Mais de 100 (informar nas observações)'] },
-      ],
-    },
-    {
-      id: 'modelados',
+      id: 'mini-trufas',
       categoria: 'personalizados',
-      nome: 'Docinhos modelados no tema',
-      descricao: 'Bichinhos e personagens modelados à mão sobre o docinho (ex.: cavalinho, pintinho).',
-      preco: null,
-      foto: 'fotos/cavalinhos.jpg',
+      nome: 'Mini trufas',
+      descricao: 'Casquinha fina de chocolate com recheio cremoso, decoradas no tema.',
+      preco: 4.5,
+      unidade: 'un.',
+      passo: 10,
+      foto: 'fotos/mini-trufas.jpg',
       destaque: true,
-      opcoes: [
-        { nome: 'Quantidade', valores: ['25 unidades', '50 unidades', '100 unidades', 'Mais de 100 (informar nas observações)'] },
-      ],
+      opcoes: [{ nome: 'Recheio', valores: ['Tradicional', 'Leite Ninho', 'Prestígio', 'Maracujá'] }],
     },
     {
-      id: 'cupcakes',
+      id: 'copinho-chocolate',
       categoria: 'personalizados',
-      nome: 'Cupcakes personalizados',
-      descricao: 'Decorados com o tema, a inicial ou o nome do aniversariante.',
-      preco: null,
-      foto: 'fotos/cupcakes.jpg',
+      nome: 'Copinho de chocolate',
+      descricao: 'Copinhos de chocolate nobre recheados.',
+      preco: 4.5,
+      unidade: 'un.',
+      passo: 10,
+      foto: 'fotos/copinho-chocolate.jpg',
+      opcoes: [{ nome: 'Recheio', valores: ['Tradicional', 'Leite Ninho', 'Prestígio', 'Maracujá'] }],
+    },
+    {
+      id: 'trufa-cake',
+      categoria: 'personalizados',
+      nome: 'Trufa cake',
+      descricao: 'Mini bolinho de casquinha de chocolate ao leite com recheio à sua escolha (informe nas observações).',
+      preco: 6,
+      unidade: 'un.',
+      passo: 10,
+      foto: 'fotos/trufa-cake.jpg',
       destaque: true,
-      opcoes: [{ nome: 'Quantidade', valores: ['10 unidades', '20 unidades', '30 unidades', 'Mais de 30 (informar nas observações)'] }],
     },
     {
-      id: 'pirulitos',
+      id: 'mini-cupcakes',
       categoria: 'personalizados',
-      nome: 'Pirulitos de chocolate decorados',
-      descricao: 'Feitos no tema da festa. Ótimos de lembrancinha.',
-      preco: null,
-      foto: 'fotos/pirulitos-tema.jpg',
-      opcoes: [{ nome: 'Quantidade', valores: ['10 unidades', '20 unidades', '30 unidades', 'Mais de 30 (informar nas observações)'] }],
+      nome: 'Mini cupcakes',
+      descricao: 'Bolinho com cobertura decorativa em pasta americana.',
+      preco: 7.5,
+      unidade: 'un.',
+      passo: 10,
+      foto: 'fotos/mini-cupcake.jpg',
+      destaque: true,
+      opcoes: [{ nome: 'Recheio', valores: ['Doce de leite', 'Nutella'] }],
     },
     {
-      id: 'mesa-doces',
+      id: 'pirulito-chocolate',
       categoria: 'personalizados',
-      nome: 'Mesa de doces completa',
-      descricao: 'A Candy monta a combinação de doces conforme o tema e o número de convidados.',
-      preco: null,
-      foto: 'fotos/mesa-doces.jpg',
+      nome: 'Pirulito de chocolate (5 cm)',
+      descricao: 'Decorado com o tema da sua festa.',
+      preco: 8,
+      unidade: 'un.',
+      passo: 10,
+      foto: 'fotos/pirulito-chocolate.jpg',
+    },
+
+    // ---- Doces, por unidade
+    {
+      id: 'concha',
+      categoria: 'doces',
+      nome: 'Concha',
+      descricao: 'Concha de chocolate recheada com creme de Leite Ninho.',
+      preco: 4.5,
+      unidade: 'un.',
+      passo: 10,
+      foto: 'fotos/concha.jpg',
+    },
+    {
+      id: 'porta-retrato',
+      categoria: 'doces',
+      nome: 'Porta-retrato',
+      descricao: 'Chocolate com letras.',
+      preco: 9.5,
+      unidade: 'un.',
+      passo: 10, // CONFIRMAR: talvez seja vendido em quantidade menor
     },
   ],
 };
