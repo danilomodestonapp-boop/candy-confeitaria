@@ -1,0 +1,42 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>Candy Confeitaria | Doces personalizados em Leme-SP</title>
+  <meta name="description" content="Doces personalizados para sua festa em Leme-SP. Monte seu pedido e receba o orçamento pelo WhatsApp.">
+  <meta name="theme-color" content="#a8566f">
+
+  <!-- Prévia do link quando compartilhado no WhatsApp/Instagram -->
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="Candy Confeitaria">
+  <meta property="og:description" content="Doces personalizados para sua festa. Peça seu orçamento pelo WhatsApp.">
+  <meta property="og:image" content="fotos/docinhos-finos.jpg">
+
+  <link rel="manifest" href="manifest.webmanifest">
+  <link rel="icon" href="icons/icon.svg" type="image/svg+xml">
+  <link rel="apple-touch-icon" href="icons/icon-192.png">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <header class="topo" id="topo"></header>
+  <nav class="categorias" id="categorias" aria-label="Categorias"></nav>
+  <main id="cardapio"></main>
+  <footer class="rodape" id="rodape"></footer>
+
+  <button class="barra-carrinho" id="barraCarrinho" hidden>
+    <span>🛒 <span id="barraRotulo">Ver pedido</span> · <span id="barraQtd"></span></span>
+    <span id="barraTotal"></span>
+  </button>
+  <a class="whats-flutuante" id="whatsFlutuante" target="_blank" rel="noopener" aria-label="Falar no WhatsApp">💬</a>
+
+  <dialog id="dlgProduto" aria-label="Escolher opções"></dialog>
+  <dialog id="dlgCarrinho" aria-label="Seu pedido"></dialog>
+  <div id="toast" role="status" aria-live="polite"></div>
+
+  <noscript><p style="padding:16px">Ative o JavaScript para ver o cardápio, ou chame no WhatsApp.</p></noscript>
+  <script src="config.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>
