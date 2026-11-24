@@ -1,6 +1,6 @@
 // Permite instalar o site como app e abrir mesmo com internet fraca.
 // Busca sempre a versão mais nova na internet; o cache só é usado quando o celular está sem sinal.
-const VERSAO = 'v1';
+const VERSAO = 'v2';
 const ARQUIVOS = ['./', 'index.html', 'styles.css', 'app.js', 'config.js', 'manifest.webmanifest', 'icons/icon.svg', 'icons/icon-192.png', 'icons/icon-512.png'];
 
 self.addEventListener('install', (e) => {
@@ -17,7 +17,8 @@ self.addEventListener('activate', (e) => {
 self.addEventListener('fetch', (e) => {
   if (e.request.method !== 'GET' || new URL(e.request.url).origin !== location.origin) return;
   e.respondWith(
-    fetch(e.request)
+    // no-cache: sempre pergunta ao servidor se há versão nova (evita mostrar dados antigos)
+    fetch(e.request, { cache: 'no-cache' })
       .then((r) => {
         const copia = r.clone();
         caches.open(VERSAO).then((c) => c.put(e.request, copia));
