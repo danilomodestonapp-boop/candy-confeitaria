@@ -4,7 +4,7 @@
  * ============================================================
  *  Dados confirmados pelo Instagram (@candyconfeitariam):
  *    nome, bio e cidade (Leme-SP).
- *  WhatsApp: (19) 99132-0025, central de pedidos das duas lojas.
+ *  WhatsApp: (19) 99634-7835 (o mesmo da bio do Instagram).
  *  ⚠️ Marcado com "CONFIRMAR": suposição minha, validar com ela.
  *
  *  A Candy trabalha com ORÇAMENTO (sem preço fixo no site):
@@ -26,8 +26,8 @@ window.LOJA = {
   emoji: '🧁',
   logo: 'fotos/logo.jpg', // recortado do Instagram; trocar pelo arquivo original em alta
 
-  whatsapp: '5519991320025',
-  whatsappExibicao: '(19) 99132-0025',
+  whatsapp: '5519996347835',
+  whatsappExibicao: '(19) 99634-7835',
   instagram: 'candyconfeitariam',
   endereco: '', // sem endereço público: o botão "Como chegar" fica escondido
   cidade: 'Leme - SP',

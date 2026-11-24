@@ -1,6 +1,6 @@
 # Candy Confeitaria: site e app de orçamentos pelo WhatsApp
 
-Doces personalizados para festa, em Leme-SP. A cliente escolhe os doces e as quantidades, informa a data da festa, o tema e o número de convidados, e o **pedido de orçamento chega organizado no WhatsApp (19) 99132-0025, a central de pedidos das duas lojas**. O site pode ser instalado na tela do celular como app (PWA).
+Doces personalizados para festa, em Leme-SP. A cliente escolhe os doces e as quantidades, informa a data da festa, o tema e o número de convidados, e o **pedido de orçamento chega organizado no WhatsApp (19) 99634-7835**. O site pode ser instalado na tela do celular como app (PWA).
 
 > **Status:** nome, bio, cidade, WhatsApp, logo e fotos vieram do Instagram. Os itens marcados `CONFIRMAR` no `config.js` (horários, antecedência mínima, entrega, nomes dos doces) são suposições e precisam ser validados com ela. Logo e fotos foram recortados de um print: trocar pelos originais em alta.
 
@@ -85,7 +85,7 @@ Abrir `index.html` direto no navegador já funciona para conferir o cardápio e 
 
 ## Checklist antes de publicar
 
-- [x] WhatsApp (19) 99132-0025, a central de pedidos das duas lojas configurado
+- [x] WhatsApp (19) 99634-7835 configurado
 - [ ] Pedido de teste real enviado e recebido por ela
 - [ ] Confirmar a lista de doces e as quantidades oferecidas
 - [ ] Horários reais
