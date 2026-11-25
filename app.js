@@ -203,11 +203,12 @@
         <div class="topo-textos">
           <h1>${esc(L.nome)}</h1>
           <p class="slogan">${esc(L.slogan)}</p>
+          ${L.cidade ? `<p class="topo-cidade">📍 ${esc(L.cidade)}</p>` : ''}
           ${L.horarioLivre ? '' : `<span class="status ${aberto ? 'aberto' : 'fechado'}">${aberto ? 'Aberto agora' : 'Fechado agora'}</span>`}
         </div>
       </div>
       <div class="topo-acoes">
-        <a class="chip" href="${linkWhats(L.mensagemContato || 'Olá! Vim pelo site.')}" target="_blank" rel="noopener">💬 Falar no WhatsApp</a>
+        <a class="chip chip-whats" href="${linkWhats(L.mensagemContato || 'Olá! Vim pelo site.')}" target="_blank" rel="noopener">💬 Falar no WhatsApp</a>
         ${L.instagram ? `<a class="chip" href="https://www.instagram.com/${esc(L.instagram)}/" target="_blank" rel="noopener">📷 Instagram</a>` : ''}
         ${L.endereco ? `<a class="chip" href="https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(L.endereco)}" target="_blank" rel="noopener">📍 Como chegar</a>` : ''}
         <button class="chip" id="btnInstalar" ${eventoInstalar ? '' : 'hidden'}>📲 Instalar app</button>
@@ -241,7 +242,7 @@
   function htmlPreco(p) {
     if (ORC && !p.preco) return `<span class="preco"><small>${esc(TXT.semPreco)}</small></span>`;
     const aPartir = ORC || temVariacaoDePreco(p);
-    return `<span class="preco">${aPartir ? '<small>a partir de</small> ' : ''}${brl(precoMinimo(p))}${p.unidade ? `<small> / ${esc(p.unidade)}</small>` : ''}</span>`;
+    return `<span class="preco">${aPartir ? '<small class="preco-de">a partir de</small>' : ''}<span class="preco-valor">${brl(precoMinimo(p))}${p.unidade ? `<small> / ${esc(p.unidade)}</small>` : ''}</span></span>`;
   }
 
   function renderCardapio() {
@@ -261,8 +262,10 @@
       .map(
         (s) => `
         <section class="secao" id="sec-${esc(s.id)}">
-          <h2>${esc(s.nome)}</h2>
-          ${s.descricao ? `<p class="secao-desc">${esc(s.descricao)}</p>` : ''}
+          <header class="secao-cab">
+            <h2>${esc(s.nome)}</h2>
+            ${s.descricao ? `<p class="secao-desc">${esc(s.descricao)}</p>` : ''}
+          </header>
           <div class="grade">${s.itens.map(cardProduto).join('')}</div>
         </section>`
       )
@@ -282,6 +285,7 @@
       )
       .join('');
     $('#rodape').innerHTML = `
+      <div class="rodape-grade">
       <section class="como-pedir">
         <h2>Como pedir</h2>
         <ol>
@@ -302,6 +306,7 @@
         <p><a href="${linkWhats(L.mensagemContato || 'Olá! Vim pelo site.')}" target="_blank" rel="noopener">WhatsApp: ${esc(L.whatsappExibicao || numeroWhats)}</a></p>
         <p class="dica-ios">No iPhone, para instalar o app: toque em <b>Compartilhar</b> e depois em <b>Adicionar à Tela de Início</b>.</p>
       </section>
+      </div>
       <p class="assinatura">© ${new Date().getFullYear()} ${esc(L.nome)}</p>`;
   }
 
